@@ -30,51 +30,98 @@ class ExpenseListView extends StatelessWidget {
             );
           }
 
-          // 3. Durum: Liste Dolu
-          return ListView.builder(
-            itemCount: viewModel.expenses.length,
-            itemBuilder: (context, index) {
-              final expense = viewModel.expenses[index];
-              return Dismissible(
-                key: Key(expense.id.toString()),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: 20),
-                  child: const Icon(Icons.delete, color: Colors.white),
+          // 3. Durum: Liste Dolu (Toplam Harcama Kartı + Harcama Listesi)
+          return Column(
+            children: [
+              // --- YENİ EKLENEN: TOPLAM HARCAMA KARTI ---
+              Card(
+                margin: const EdgeInsets.all(12),
+                color: Theme.of(context).primaryColor,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onDismissed: (direction) {
-                  if (expense.id != null) {
-                    viewModel.deleteExpense(expense.id!);
-                  }
-                },
-                child: Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(
-                        expense.category.isNotEmpty
-                            ? expense.category[0].toUpperCase()
-                            : '?',
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Toplam Harcama:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    title: Text(expense.title),
-                    subtitle: Text(
-                      DateFormat('dd.MM.yyyy').format(expense.date),
-                    ),
-                    trailing: Text(
-                      '${expense.amount.toStringAsFixed(2)} ₺',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                        fontSize: 15,
+                      Text(
+                        '${viewModel.totalExpense.toStringAsFixed(2)} ₺',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              );
-            },
+              ),
+
+              // --- HARCAMA LİSTESİ ---
+              Expanded(
+                child: ListView.builder(
+                  itemCount: viewModel.expenses.length,
+                  itemBuilder: (context, index) {
+                    final expense = viewModel.expenses[index];
+                    return Dismissible(
+                      key: Key(expense.id.toString()),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+                      onDismissed: (direction) {
+                        if (expense.id != null) {
+                          viewModel.deleteExpense(expense.id!);
+                        }
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            child: Text(
+                              expense.category.isNotEmpty
+                                  ? expense.category[0].toUpperCase()
+                                  : '?',
+                            ),
+                          ),
+                          title: Text(expense.title),
+                          subtitle: Text(
+                            DateFormat('dd.MM.yyyy').format(expense.date),
+                          ),
+                          trailing: Text(
+                            '${expense.amount.toStringAsFixed(2)} ₺',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -128,7 +175,9 @@ class ExpenseListView extends StatelessWidget {
                   // 2. Tutar Girişi
                   TextField(
                     controller: amountController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(
                       labelText: 'Tutar (₺)',
                       border: OutlineInputBorder(),
@@ -201,7 +250,9 @@ class ExpenseListView extends StatelessWidget {
                       if (title.isEmpty || amount == null || amount <= 0) {
                         ScaffoldMessenger.of(mainContext).showSnackBar(
                           const SnackBar(
-                            content: Text('Lütfen geçerli bir başlık ve tutar girin!'),
+                            content: Text(
+                              'Lütfen geçerli bir başlık ve tutar girin!',
+                            ),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -215,8 +266,10 @@ class ExpenseListView extends StatelessWidget {
                         date: selectedDate,
                       );
 
-                      Provider.of<ExpenseViewModel>(mainContext, listen: false)
-                          .addExpense(newExpense);
+                      Provider.of<ExpenseViewModel>(
+                        mainContext,
+                        listen: false,
+                      ).addExpense(newExpense);
 
                       Navigator.of(sheetContext).pop();
                     },

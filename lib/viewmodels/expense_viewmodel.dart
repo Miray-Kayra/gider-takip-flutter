@@ -9,6 +9,11 @@ class ExpenseViewModel extends ChangeNotifier {
   bool _isLoading = false;
 
   List<ExpenseModel> get expenses => _expenses;
+  double get TotalExpense{
+    return _expenses.fold(0.0, (sum, item) => sum + item.amount);
+  }
+
+
   bool get isLoading => _isLoading;
 
   double get totalExpense {
