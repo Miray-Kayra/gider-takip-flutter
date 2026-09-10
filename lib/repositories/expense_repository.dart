@@ -15,4 +15,9 @@ class ExpenseRepository {
   Future<int> deleteExpense(int id) async {
     return await _databaseHelper.deleteExpense(id);
   }
+
+  Future<int> updateExpense(ExpenseModel expense) async {
+    return await _databaseHelper.updateExpense(expense);
+  }
+
 }

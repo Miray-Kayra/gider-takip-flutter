@@ -192,7 +192,7 @@ class ExpenseListView extends StatelessWidget {
                       labelText: 'Kategori',
                       border: OutlineInputBorder(),
                     ),
-                    items: ['Market', 'Ulaşım', 'Eğlence', 'Fatura', 'Diğer']
+                    items: ['Market', 'Fatura', 'Eğlence', 'Ulaşım', 'Diğer']
                         .map((category) => DropdownMenuItem(
                               value: category,
                               child: Text(category),
@@ -283,4 +283,64 @@ class ExpenseListView extends StatelessWidget {
       },
     );
   }
+  void _showEditExpenseDialog(BuildContext context, ExpenseModel expense) {
+    final titleController = TextEditingController(text: expense.title);
+    final amountController = TextEditingController(text: expense.amount.toString());
+    String selectedCategory = expense.category;
+    DateTime selectedDate = expense.date;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, 
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          top:20,
+          left: 20,
+          right: 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Harcamayı Düzenle',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(labelText: 'Harcama Adı'),
+            ),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Tutar (₺)'),
+            ), 
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: (){
+                final title = titleController.text.trim();
+                final amount = double.tryParse(amountController.text);
+
+                if(title.isNotEmpty && amount != null && amount > 0) {
+                  final updatedExpense = ExpenseModel(
+                    id: expense.id,
+                    title: title,
+                    amount: amount,
+                    date: selectedDate,
+                    category: selectedCategory,
+                  );
+
+                  Provider.of<ExpenseViewModel>(context, listen: false)
+                      .updateExpense(updatedExpense);
+
+                    Navigator.of(sheetContext).pop();  
+                }
+              },
+              child: const Text('Güncelle'),
+            ),
+          ],
+      ),
+    ),
+  );
+  }  
 }

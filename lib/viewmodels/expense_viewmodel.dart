@@ -39,4 +39,14 @@ class ExpenseViewModel extends ChangeNotifier {
     await _expenseRepository.deleteExpense(id);
     await fetchExpenses();
   } 
+  Future<void> updateExpense(ExpenseModel expense) async{
+    await _expenseRepository.updateExpense(expense);
+    await fetchExpenses();
+  }
+
+
+
+
+
+
 }
