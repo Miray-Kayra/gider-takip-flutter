@@ -115,6 +115,9 @@ class ExpenseListView extends StatelessWidget {
                               fontSize: 15,
                             ),
                           ),
+                          onTap: () {
+                            _showEditExpenseDialog(context, expense);
+                          }
                         ),
                       ),
                     );
