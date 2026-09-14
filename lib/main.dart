@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       ),
       home: ChangeNotifierProvider(
         create: (context) => ExpenseViewModel(),
-        child: const ExpenseListView(),
+        child: ExpenseListView(),
       )
     );
   }

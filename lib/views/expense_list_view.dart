@@ -5,7 +5,10 @@ import '../viewmodels/expense_viewmodel.dart';
 import '../models/expense_model.dart';
 
 class ExpenseListView extends StatelessWidget {
-  const ExpenseListView({super.key});
+  ExpenseListView({super.key});
+
+  final List <String>_categories = ['Yemek', 'Ulaşım', 'Fatura', 'Eğlence', 'Alışveriş', 'Diğer'];
+
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +141,7 @@ class ExpenseListView extends StatelessWidget {
   void _showAddExpenseDialog(BuildContext mainContext) {
     final titleController = TextEditingController();
     final amountController = TextEditingController();
-    String selectedCategory = 'Market';
+    String selectedCategory = _categories.first;
     DateTime selectedDate = DateTime.now();
 
     showModalBottomSheet(
@@ -178,9 +181,7 @@ class ExpenseListView extends StatelessWidget {
                   // 2. Tutar Girişi
                   TextField(
                     controller: amountController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: const InputDecoration(
                       labelText: 'Tutar (₺)',
                       border: OutlineInputBorder(),
@@ -188,23 +189,23 @@ class ExpenseListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // 3. Kategori Seçimi
+                  // 3. Kategori Seçimi (Dropdown)
                   DropdownButtonFormField<String>(
                     initialValue: selectedCategory,
                     decoration: const InputDecoration(
                       labelText: 'Kategori',
                       border: OutlineInputBorder(),
                     ),
-                    items: ['Market', 'Fatura', 'Eğlence', 'Ulaşım', 'Diğer']
-                        .map((category) => DropdownMenuItem(
-                              value: category,
-                              child: Text(category),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value != null) {
+                    items: _categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
                         setState(() {
-                          selectedCategory = value;
+                          selectedCategory = newValue;
                         });
                       }
                     },
@@ -229,6 +230,7 @@ class ExpenseListView extends StatelessWidget {
                             firstDate: DateTime(2020),
                             lastDate: DateTime.now(),
                           );
+
                           if (pickedDate != null) {
                             setState(() {
                               selectedDate = pickedDate;
@@ -253,9 +255,7 @@ class ExpenseListView extends StatelessWidget {
                       if (title.isEmpty || amount == null || amount <= 0) {
                         ScaffoldMessenger.of(mainContext).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                              'Lütfen geçerli bir başlık ve tutar girin!',
-                            ),
+                            content: Text('Lütfen geçerli bir başlık ve tutar girin!'),
                             backgroundColor: Colors.red,
                           ),
                         );
