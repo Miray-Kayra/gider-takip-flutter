@@ -8,18 +8,34 @@ class ExpenseViewModel extends ChangeNotifier {
   List<ExpenseModel> _expenses = [];
   bool _isLoading = false;
 
-  List<ExpenseModel> get expenses => _expenses;
-  double get TotalExpense{
-    return _expenses.fold(0.0, (sum, item) => sum + item.amount);
+  String? _selectedCategoryFilter;
+  String? get selectedCategoryFilter => _selectedCategoryFilter;
+  List<ExpenseModel> get filteredExpenses{
+    if (_selectedCategoryFilter == null || _selectedCategoryFilter =='Tümü'){
+      return _expenses;
+    }
+    return _expenses
+        .where((expense) => expense.category == _selectedCategoryFilter)
+        .toList();
   }
 
+  void setCategoryFilter(String? category) {
+    _selectedCategoryFilter = category;
+    notifyListeners();
+  }
+
+
+  List<ExpenseModel> get expenses => _expenses;
+ 
 
   bool get isLoading => _isLoading;
 
   double get totalExpense {
     return _expenses.fold(0.0, (sum, item) => sum + item.amount);
   }
-
+  double get filteredTotalExpense {
+    return filteredExpenses.fold(0.0, (sum, item) => sum + item.amount);
+  }
 
   Future<void> fetchExpenses() async {
     _isLoading = true;

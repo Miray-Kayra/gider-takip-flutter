@@ -24,14 +24,7 @@ class ExpenseListView extends StatelessWidget {
           }
 
           // 2. Durum: Liste Boş
-          if (viewModel.expenses.isEmpty) {
-            return const Center(
-              child: Text(
-                'Henüz harcama eklenmedi.',
-                style: TextStyle(fontSize: 16),
-              ),
-            );
-          }
+          
 
           // 3. Durum: Liste Dolu (Toplam Harcama Kartı + Harcama Listesi)
           return Column(
@@ -61,7 +54,7 @@ class ExpenseListView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${viewModel.totalExpense.toStringAsFixed(2)} ₺',
+                        '${viewModel.filteredTotalExpense.toStringAsFixed(2)} ₺',
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -72,13 +65,44 @@ class ExpenseListView extends StatelessWidget {
                   ),
                 ),
               ),
+            SizedBox(
+              height: 50,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: ['Tümü', ..._categories].map((category) {
+                  final isSelected = (viewModel.selectedCategoryFilter == category) ||
+                      (viewModel.selectedCategoryFilter == null && category == 'Tümü');
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: FilterChip(
+                      label: Text(category),
+                      selected: isSelected,
+                      onSelected: (bool selected){
+                        viewModel.setCategoryFilter(category == 'Tümü' ? null : category);
+                      },
+                    ),
+                 );
+                }).toList()
+              ),
+            ),
+
 
               // --- HARCAMA LİSTESİ ---
               Expanded(
-                child: ListView.builder(
-                  itemCount: viewModel.expenses.length,
+                child:
+                viewModel.filteredExpenses.isEmpty
+                    ? const Center(
+                      child: Text(
+                        'Seçilen kategoriye ait harcama bulunamadı.',
+                        style: TextStyle(fontSize: 16,color: Colors.grey),
+                      ),
+                    )
+
+                : ListView.builder(
+                  itemCount: viewModel.filteredExpenses.length,
                   itemBuilder: (context, index) {
-                    final expense = viewModel.expenses[index];
+                    final expense = viewModel.filteredExpenses[index];
                     return Dismissible(
                       key: Key(expense.id.toString()),
                       direction: DismissDirection.endToStart,
