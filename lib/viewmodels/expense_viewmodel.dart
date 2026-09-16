@@ -60,9 +60,34 @@ class ExpenseViewModel extends ChangeNotifier {
     await fetchExpenses();
   }
 
+  final Map<String, double> _categoryBudgets = {
+    'Yemek': 3000,
+    'Ulaşım': 1500,
+    'Fatura': 2000,
+    'Eğlence': 1000,
+    'Alışveriş': 2500, 
+    'Diğer': 1000,
 
+  };
 
-
-
+  Map<String, double> get categoryBudgets => _categoryBudgets;
+  double getTotalExpenseByCategory(String category){
+    return _expenses
+        .where((expense) => expense.category == category)
+        .fold(0.0, (sum, item) => sum+item.amount);
+  }
+  double getBudgetProgress(String category){
+    double limit = _categoryBudgets[category] ?? 1.0;
+    double spent= getTotalExpenseByCategory(category);
+    return (spent / limit).clamp(0.0, 1.0);
+  }  
+  
+  Map<String, double> get categoryExpenses{
+    Map<String, double> data ={};
+    for (var expense in _expenses){
+      data[expense.category] = (data[expense.category] ?? 0) + expense.amount;
+    }
+    return data;
+  }
 
 }

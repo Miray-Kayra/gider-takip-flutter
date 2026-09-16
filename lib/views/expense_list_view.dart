@@ -65,7 +65,8 @@ class ExpenseListView extends StatelessWidget {
                   ),
                 ),
               ),
-            SizedBox(
+                  // 1. ÖNCE FİLTRE BUTONLARI (KATEGORİLER)
+              SizedBox(
               height: 50,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -78,14 +79,74 @@ class ExpenseListView extends StatelessWidget {
                     child: FilterChip(
                       label: Text(category),
                       selected: isSelected,
-                      onSelected: (bool selected){
+                      onSelected: (bool selected) {
                         viewModel.setCategoryFilter(category == 'Tümü' ? null : category);
                       },
                     ),
-                 );
-                }).toList()
+                  );
+                }).toList(),
               ),
             ),
+
+                // 2. SONRA BÜTÇE İLERLEME ÇUBUĞU (Kategori seçildiğinde görünür)
+                if (viewModel.selectedCategoryFilter != null) ...[
+                  Builder(
+                    builder: (context) {
+                      final category = viewModel.selectedCategoryFilter!;
+                      final limit = viewModel.categoryBudgets[category] ?? 0;
+                      final spent = viewModel.getTotalExpenseByCategory(category);
+                      final progress = viewModel.getBudgetProgress(category);
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '$category Bütçesi',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${spent.toStringAsFixed(0)} TL / ${limit.toStringAsFixed(0)} TL',
+                                  style: TextStyle(
+                                    color: progress >= 1.0 ? Colors.red : Colors.grey[700],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            LinearProgressIndicator(
+                              value: progress,
+                              backgroundColor: Colors.grey[300],
+                              color: progress >= 1.0
+                                  ? Colors.red
+                                  : progress > 0.8
+                                      ? Colors.orange
+                                      : Colors.green,
+                              minHeight: 8,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            if(spent > limit && limit> 0) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                ' Bütçe limiti ${(spent - limit).toStringAsFixed(0)} TL aşıldı!',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
 
 
               // --- HARCAMA LİSTESİ ---
