@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/expense_viewmodel.dart';
 import '../models/expense_model.dart';
+import 'package:fl_chart/fl_chart.dart';
+
 
 class ExpenseListView extends StatelessWidget {
   ExpenseListView({super.key});
@@ -65,6 +67,8 @@ class ExpenseListView extends StatelessWidget {
                   ),
                 ),
               ),
+              _buildPieChart(viewModel),
+              const SizedBox(height: 12),
                   // 1. ÖNCE FİLTRE BUTONLARI (KATEGORİLER)
               SizedBox(
               height: 50,
@@ -431,4 +435,52 @@ class ExpenseListView extends StatelessWidget {
     ),
   );
   }  
+  Widget _buildPieChart(ExpenseViewModel viewModel){
+    final categoryData = viewModel.categoryExpenses;
+
+     final Map<String, Color> categoryColors ={
+      'Yemek': Colors.orange,
+      'Ulaşım': Colors.blue,
+      'Fatura': Colors.red,
+      'Eğlence': Colors.purple,
+      'Alışveriş': Colors.pink,
+      'Diğer': Colors.grey,     
+     };
+
+     final List<PieChartSectionData> sections = categoryData.entries.map((entry){
+      final color = categoryColors[entry.key] ?? Colors.teal;
+      final total = viewModel.filteredTotalExpense;
+      final percentage = total >0 ? (entry.value / total)*100 : 0;
+
+      return PieChartSectionData(
+        color: color,
+        value: entry.value,
+        title: '${entry.key}\n%${percentage.toStringAsFixed(0)}',
+        radius: 50,
+        titleStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+
+     }).toList();
+    return SizedBox(
+      height: 140,
+      child: PieChart( 
+          PieChartData(
+            sections: sections,
+            centerSpaceRadius: 25,
+            sectionsSpace: 2,
+        ),
+      ),
+    );
+
+  }
+
+
+
+
+
+
 }

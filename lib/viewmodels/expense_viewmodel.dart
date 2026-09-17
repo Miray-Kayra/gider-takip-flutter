@@ -84,7 +84,7 @@ class ExpenseViewModel extends ChangeNotifier {
   
   Map<String, double> get categoryExpenses{
     Map<String, double> data ={};
-    for (var expense in _expenses){
+    for (var expense in filteredExpenses){
       data[expense.category] = (data[expense.category] ?? 0) + expense.amount;
     }
     return data;
