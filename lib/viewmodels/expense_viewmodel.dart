@@ -10,13 +10,16 @@ class ExpenseViewModel extends ChangeNotifier {
 
   String? _selectedCategoryFilter;
   String? get selectedCategoryFilter => _selectedCategoryFilter;
+
   List<ExpenseModel> get filteredExpenses{
-    if (_selectedCategoryFilter == null || _selectedCategoryFilter =='Tümü'){
-      return _expenses;
-    }
-    return _expenses
-        .where((expense) => expense.category == _selectedCategoryFilter)
-        .toList();
+    return _expenses.where((expense){
+      final matchesCategory = _selectedCategoryFilter == null ||
+                              _selectedCategoryFilter == 'Tümü' ||
+                              expense.category ==selectedCategoryFilter;
+      final matchesMonth = expense.date.year == _selectedMonth.year &&
+                         expense.date.month == _selectedMonth.month;
+      return matchesCategory && matchesMonth;                                                              
+    }).toList();
   }
 
   void setCategoryFilter(String? category) {
@@ -59,6 +62,15 @@ class ExpenseViewModel extends ChangeNotifier {
     await _expenseRepository.updateExpense(expense);
     await fetchExpenses();
   }
+
+  DateTime _selectedMonth = DateTime.now();
+  DateTime get selectedMonth => _selectedMonth;
+
+  void changeMonth(DateTime newMonth){
+    _selectedMonth= newMonth;
+    notifyListeners();
+  }
+
 
   final Map<String, double> _categoryBudgets = {
     'Yemek': 3000,

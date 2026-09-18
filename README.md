@@ -1,16 +1,38 @@
-# gider_takip_flutter
+#  Kişisel Gider Takip ve Bütçe Uygulaması
 
-A new Flutter project.
+Bu proje, kullanıcıların günlük harcamalarını kaydedip aylık bütçelerini kolayca takip edebilmeleri amacıyla geliştirilmiş bir mobil uygulamadır.
 
-## Getting Started
+##  Özellikler
 
-This project is a starting point for a Flutter application.
+* **Tam CRUD Desteği:** Yeni harcama ekleme, listeleme, güncelleme ve silme (CRUD) işlemleri.
+* **Çift Filtreleme Mantığı:** Harcamaları hem *kategoriye* (Yemek, Ulaşım, Fatura vb.) hem de *seçilen aya* göre dinamik filtreleme.
+* **Görsel Raporlama:** fl_chart kütüphanesi kullanılarak oluşturulan dinamik ve interaktif pasta grafik (Pie Chart) ile harcama dağılımı gösterimi.
+* **Bütçe Takibi:** Kategori bazlı harcama limitleri ve bütçe durum göstergeleri.
+* **Veri Doğrulaması (Validation):** Hatalı veya negatif tutar girişlerini engelleyen arayüz kontrolleri ve kullanıcı uyarı mekanizmaları.
+* **Yerel Veri Saklama:** İnternet bağlantısı gerektirmeksizin SQLite altyapısı ile verilerin cihazda güvenli şekilde depolanması.
 
-A few resources to get you started if this is your first Flutter project:
+##  Teknolojiler ve Mimari
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+* **Dil:** Flutter & Dart
+* **Mimari:** MVVM (Model-ViewModel-View)
+* **State Management:** Provider (ChangeNotifier)
+* **Veritabanı:** SQLite (sqflite)
+* **Grafik Kütüphanesi:** fl_chart
+* **Tarih Formatlama:** intl
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+##  Proje Dizin Yapısı
+
+```text
+lib/
+├── models/
+│   └── expense_model.dart        # Harcama veri modeli
+├── repositories/
+│   └── expense_repository.dart   # Veritabanı veri erişim katmanı
+├── services/
+│   └── database_helper.dart      # SQLite veritabanı kurulumu
+├── viewmodels/
+│   └── expense_viewmodel.dart    # İş mantığı ve durum yönetimi (MVVM)
+├── views/
+│   └── expense_list_view.dart    # Ana ekran ve UI bileşenleri
+└── main.dart                     # Uygulama başlangıç noktası
+``` 

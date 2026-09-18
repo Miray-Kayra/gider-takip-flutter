@@ -31,6 +31,48 @@ class ExpenseListView extends StatelessWidget {
           // 3. Durum: Liste Dolu (Toplam Harcama Kartı + Harcama Listesi)
           return Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: (){
+                        viewModel.changeMonth(
+                          DateTime(viewModel.selectedMonth.year, viewModel.selectedMonth.month - 1),
+                        );
+                      },
+                    ),
+                    Text(
+                      "${viewModel.selectedMonth.year} - ${viewModel.selectedMonth.month.toString().padLeft(2, '0')}",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: (){
+                        viewModel.changeMonth(
+                          DateTime(viewModel.selectedMonth.year, viewModel.selectedMonth.month+1),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               // --- YENİ EKLENEN: TOPLAM HARCAMA KARTI ---
               Card(
                 margin: const EdgeInsets.all(12),
@@ -449,8 +491,8 @@ class ExpenseListView extends StatelessWidget {
 
      final List<PieChartSectionData> sections = categoryData.entries.map((entry){
       final color = categoryColors[entry.key] ?? Colors.teal;
-      final total = viewModel.filteredTotalExpense;
-      final percentage = total >0 ? (entry.value / total)*100 : 0;
+      final total = categoryData.values.fold(0.0, (sum, item) => sum +item);
+      final percentage = total > 0 ? (entry.value / total) * 100 : 0;
 
       return PieChartSectionData(
         color: color,
@@ -475,12 +517,5 @@ class ExpenseListView extends StatelessWidget {
         ),
       ),
     );
-
-  }
-
-
-
-
-
-
+   }
 }
