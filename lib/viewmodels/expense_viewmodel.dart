@@ -84,7 +84,7 @@ class ExpenseViewModel extends ChangeNotifier {
 
   Map<String, double> get categoryBudgets => _categoryBudgets;
   double getTotalExpenseByCategory(String category){
-    return _expenses
+    return filteredExpenses
         .where((expense) => expense.category == category)
         .fold(0.0, (sum, item) => sum+item.amount);
   }

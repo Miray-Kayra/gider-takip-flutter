@@ -59,19 +59,7 @@ class ExpenseListView extends StatelessWidget {
                   ],
                 ),
               ),
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
               // --- YENİ EKLENEN: TOPLAM HARCAMA KARTI ---
               Card(
